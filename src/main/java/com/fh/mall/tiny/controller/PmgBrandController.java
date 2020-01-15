@@ -2,6 +2,9 @@ package com.fh.mall.tiny.controller;
 
 import com.fh.mall.tiny.common.api.CommonPage;
 import com.fh.mall.tiny.mbg.model.PmsBrand;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Controller;
 
 /**
@@ -20,6 +23,12 @@ import java.util.List;
 /**
  * 品牌管理Controller
  */
+//添加上Swagger注解@Api相关
+//@Api：用于修饰Controller类，生成Controller相关文档信息
+//@ApiOperation：用于修饰Controller类中的方法，生成接口方法相关文档信息
+//@ApiParam：用于修饰接口中的参数，生成接口参数相关文档信息
+//@ApiModelProperty：用于修饰实体类的属性，当实体类是请求参数或返回结果时，直接生成相关文档信息
+@Api(tags = "PmsBrandController",description = "商品品牌管理")
 @Controller
 @RequestMapping("/brand")
 public class PmgBrandController {
@@ -30,12 +39,14 @@ public class PmgBrandController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PmgBrandController.class);
 
+    @ApiOperation("获取所有品牌列表")
     @RequestMapping(value = "listAll",method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<List<PmsBrand>> getBrandList(){
         return CommonResult.success(demoService.listAllBrand());
     }
 
+    @ApiOperation("添加品牌")
     @RequestMapping(value = "/create",method = RequestMethod.POST)
     @ResponseBody
     public CommonResult createBrand(@RequestBody PmsBrand pmsBrand){
@@ -52,6 +63,7 @@ public class PmgBrandController {
         return commonResult;
     }
 
+    @ApiOperation("更新指定id品牌信息")
     @RequestMapping(value = "/update/{id}",method = RequestMethod.POST)
     @ResponseBody
     public CommonResult updateBrand(@PathVariable("id") Long id , @RequestBody PmsBrand pmsBrandDto, BindingResult result){
@@ -67,6 +79,7 @@ public class PmgBrandController {
         return commonResult;
     }
 
+    @ApiOperation("删除指定id的品牌")
     @RequestMapping(value = "/delete/{id}",method = RequestMethod.GET)
     @ResponseBody
     public CommonResult deleteBrand(@PathVariable("id") Long id){
@@ -80,16 +93,20 @@ public class PmgBrandController {
         return CommonResult.failed("操作失败");
     }
 
+    @ApiOperation("分页查询品牌列表")
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     @ResponseBody
-   public CommonResult<CommonPage<PmsBrand>> listBrand(@RequestParam(value = "pageNum",defaultValue = "1") Integer pageNum,
+   public CommonResult<CommonPage<PmsBrand>> listBrand(@RequestParam(value = "pageNum",defaultValue = "1")
+                                                           @ApiParam("页码") Integer pageNum,
                                                        @RequestParam(value = "pageSize",defaultValue = "3")
-                                                       Integer pageSize){
+                                                            @ApiParam("每页数量") Integer pageSize){
         List<PmsBrand> brandList = demoService.listBrand(pageNum,pageSize);
         return CommonResult.success(CommonPage.restPage(brandList));
    }
 
+   @ApiOperation("获取指定id的品牌详情")
    @RequestMapping(value = "/{id}",method = RequestMethod.GET)
+   @ResponseBody
    public CommonResult<PmsBrand> brand(@PathVariable("id") Long id){
         return CommonResult.success(demoService.getBrand(id));
 
